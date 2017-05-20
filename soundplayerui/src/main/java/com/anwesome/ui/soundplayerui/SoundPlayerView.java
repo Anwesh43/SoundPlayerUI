@@ -14,13 +14,25 @@ public class SoundPlayerView extends View{
     private Context context;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private long durationInSeconds;
-    private int w,h;
+    private int w,h,time = 0;
+    private boolean isRunning = false;
+    private SeekBar seekBar;
     public SoundPlayerView(Context context,long duration) {
         super(context);
         this.durationInSeconds = duration;
     }
     public void onDraw(Canvas canvas) {
-
+        if(time == 0) {
+            w = canvas.getWidth();
+            h = canvas.getHeight();
+            seekBar = new SeekBar();
+        }
+        seekBar.draw(canvas);
+        time++;
+    }
+    public void update() {
+        seekBar.update();
+        postInvalidate();
     }
     public boolean onTouchEvent(MotionEvent event) {
         return true;
