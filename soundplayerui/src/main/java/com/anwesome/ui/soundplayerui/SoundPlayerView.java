@@ -15,8 +15,10 @@ public class SoundPlayerView extends View{
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private long durationInSeconds;
     private int w,h,time = 0;
+    private AnimationRunner animationRunner = new AnimationRunner();
     private boolean isRunning = false;
     private SeekBar seekBar;
+    private Thread animationThread;
     public SoundPlayerView(Context context,long duration) {
         super(context);
         this.durationInSeconds = duration;
@@ -26,6 +28,8 @@ public class SoundPlayerView extends View{
             w = canvas.getWidth();
             h = canvas.getHeight();
             seekBar = new SeekBar();
+            animationThread = new Thread(animationRunner);
+            animationThread.start();
         }
         seekBar.draw(canvas);
         time++;
@@ -33,6 +37,26 @@ public class SoundPlayerView extends View{
     public void update() {
         seekBar.update();
         postInvalidate();
+    }
+    public void pause() {
+        if (isRunning) {
+            isRunning = false;
+            while (true) {
+                try {
+                    animationThread.join();
+                    break;
+                } catch (Exception ex) {
+
+                }
+            }
+        }
+    }
+    public void resume() {
+        if(!isRunning) {
+            isRunning = true;
+            animationThread = new Thread(animationRunner);
+            animationThread.start();
+        }
     }
     public boolean onTouchEvent(MotionEvent event) {
         return true;
@@ -55,9 +79,27 @@ public class SoundPlayerView extends View{
             canvas.drawCircle(x,y,h/20,paint);
         }
         public void update() {
-            currentTime++;
-            x = w*((currentTime*1.0f)/durationInSeconds);
+            if(currentTime<durationInSeconds) {
+                currentTime++;
+                x = w * ((currentTime * 1.0f) / durationInSeconds);
+            }
+            else {
+                isRunning = false;
+            }
         }
 
+    }
+    private class AnimationRunner implements Runnable {
+        public void run() {
+            while(isRunning) {
+                update();
+                try {
+                    Thread.sleep(1000);
+                }
+                catch(Exception ex) {
+
+                }
+            }
+        }
     }
 }
