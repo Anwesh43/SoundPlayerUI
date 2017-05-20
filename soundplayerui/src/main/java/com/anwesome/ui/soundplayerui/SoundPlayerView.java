@@ -16,7 +16,7 @@ public class SoundPlayerView extends View{
     private long durationInSeconds;
     private int w,h,time = 0;
     private AnimationRunner animationRunner = new AnimationRunner();
-    private boolean isRunning = false;
+    private boolean isRunning = true;
     private SeekBar seekBar;
     private Thread animationThread;
     public SoundPlayerView(Context context,long duration) {
@@ -31,6 +31,7 @@ public class SoundPlayerView extends View{
             animationThread = new Thread(animationRunner);
             animationThread.start();
         }
+        canvas.drawColor(Color.parseColor("#2A2A2A"));
         seekBar.draw(canvas);
         time++;
     }
@@ -65,18 +66,18 @@ public class SoundPlayerView extends View{
         private long currentTime = 0;
         private float x = 0,y;
         public SeekBar() {
-            y = h/10;
+            y = h/5;
         }
         public void draw(Canvas canvas) {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(h/20);
-            paint.setColor(Color.argb(150,255,0,0));
+            paint.setColor(Color.argb(60,255,0,0));
             canvas.drawLine(0,y,w,y,paint);
             paint.setColor(Color.RED);
             canvas.drawLine(0,y,x,y,paint);
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.argb(150,255,0,0));
-            canvas.drawCircle(x,y,h/20,paint);
+            canvas.drawCircle(x,y,h/8,paint);
         }
         public void update() {
             if(currentTime<durationInSeconds) {
