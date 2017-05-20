@@ -60,13 +60,15 @@ public class SoundPlayerView extends View{
         }
     }
     public boolean onTouchEvent(MotionEvent event) {
+        seekBar.handleTouch(event);
         return true;
     }
     private class SeekBar {
         private long currentTime = 0;
         private float x = 0,y;
+        private boolean isDown = false;
         public SeekBar() {
-            y = h/5;
+            y = h/3;
         }
         public void draw(Canvas canvas) {
             paint.setStyle(Paint.Style.STROKE);
@@ -78,6 +80,33 @@ public class SoundPlayerView extends View{
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.argb(150,255,0,0));
             canvas.drawCircle(x,y,h/8,paint);
+        }
+        public void handleTouch(MotionEvent event) {
+            float tx = event.getX(),ty = event.getY();
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    if(!isDown && tx>=x-h/5 && tx<=x+h/5 && ty>=y-h/5 && ty<=y+h/5) {
+                        isDown = true;
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if(isDown) {
+                        x = event.getX();
+                        currentTime = (long)(((x*1.0f)/w)*durationInSeconds);
+
+                        postInvalidate();
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if(isDown) {
+                        isDown = false;
+                        if(!isRunning) {
+                            resume();
+                        }
+                    }
+                    break;
+            }
+
         }
         public void update() {
             if(currentTime<durationInSeconds) {
