@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SoundPlayerUIDemo.iml" filepath="$PROJECT_DIR$/SoundPlayerUIDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/soundplayerui/soundplayerui.iml" filepath="$PROJECT_DIR$/soundplayerui/soundplayerui.iml" />
+    </modules>
+  </component>
+</project>
