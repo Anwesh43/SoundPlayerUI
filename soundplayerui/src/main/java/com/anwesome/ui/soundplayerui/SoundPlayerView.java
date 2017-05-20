@@ -2,6 +2,8 @@ package com.anwesome.ui.soundplayerui;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -10,7 +12,9 @@ import android.view.View;
  */
 public class SoundPlayerView extends View{
     private Context context;
+    private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private long durationInSeconds;
+    private int w,h;
     public SoundPlayerView(Context context,long duration) {
         super(context);
         this.durationInSeconds = duration;
@@ -21,5 +25,27 @@ public class SoundPlayerView extends View{
     public boolean onTouchEvent(MotionEvent event) {
         return true;
     }
+    private class SeekBar {
+        private long currentTime = 0;
+        private float x = 0,y;
+        public SeekBar() {
+            y = h/10;
+        }
+        public void draw(Canvas canvas) {
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(h/20);
+            paint.setColor(Color.argb(150,255,0,0));
+            canvas.drawLine(0,y,w,y,paint);
+            paint.setColor(Color.RED);
+            canvas.drawLine(0,y,x,y,paint);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.argb(150,255,0,0));
+            canvas.drawCircle(x,y,h/20,paint);
+        }
+        public void update() {
+            currentTime++;
+            x = w*((currentTime*1.0f)/durationInSeconds);
+        }
 
+    }
 }
