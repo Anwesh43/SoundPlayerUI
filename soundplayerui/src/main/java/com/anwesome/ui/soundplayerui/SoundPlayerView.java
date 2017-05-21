@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -12,6 +13,7 @@ import android.view.View;
  */
 public class SoundPlayerView extends View{
     private Context context;
+    private PlayButton playButton;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private long durationInSeconds;
     private int w,h,time = 0;
@@ -28,11 +30,13 @@ public class SoundPlayerView extends View{
             w = canvas.getWidth();
             h = canvas.getHeight();
             seekBar = new SeekBar();
+            playButton = new PlayButton();
             animationThread = new Thread(animationRunner);
             animationThread.start();
         }
-        canvas.drawColor(Color.parseColor("#2A2A2A"));
+        canvas.drawColor(Color.parseColor("#424242"));
         seekBar.draw(canvas);
+        playButton.draw(canvas);
         time++;
     }
     public void update() {
@@ -61,6 +65,7 @@ public class SoundPlayerView extends View{
     }
     public boolean onTouchEvent(MotionEvent event) {
         seekBar.handleTouch(event);
+        playButton.handleTouch(event);
         return true;
     }
     private class SeekBar {
@@ -130,6 +135,54 @@ public class SoundPlayerView extends View{
 
                 }
             }
+        }
+    }
+    private class PlayButton {
+        private float x,y,size;
+        private int mode = 0;
+        public PlayButton() {
+
+            x = w/2;
+            y = h/2+h/6;
+            size = h/4;
+        }
+        public void draw(Canvas canvas) {
+            paint.setColor(Color.BLACK);
+            canvas.save();
+            canvas.translate(x-size/2,y-size/2);
+            if(mode == 0) {
+                paint.setStrokeWidth(size/6);
+                float lineX = 0;
+                for(int i=0;i<2;i++) {
+                    canvas.drawLine(lineX+size/12, size/12, lineX+size / 12, size - size/12, paint);
+                    lineX+= size/6+2*size/3;
+                }
+            }
+            else {
+                Path path = new Path();
+                path.moveTo(0,0);
+                path.lineTo(0,size);
+                path.lineTo(size,size/2);
+                canvas.drawPath(path,paint);
+            }
+            canvas.restore();
+        }
+        public boolean handleTouch(MotionEvent event) {
+            float x = event.getX(),y = event.getY();
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                boolean condition = x >= this.x - size  && x <= this.x + size  && y >= this.y - size && y <= this.y + size ;
+                if (condition) {
+                    mode = mode == 0 ? 1 : 0;
+                    if (mode == 1) {
+                        pause();
+                    } else {
+                        resume();
+                    }
+                    postInvalidate();
+                }
+                return condition;
+            }
+            return false;
         }
     }
 }
