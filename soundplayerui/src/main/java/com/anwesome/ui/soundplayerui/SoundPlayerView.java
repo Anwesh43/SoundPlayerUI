@@ -90,7 +90,7 @@ public class SoundPlayerView extends View{
             float tx = event.getX(),ty = event.getY();
             switch(event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    if(!isDown && tx>=x-h/5 && tx<=x+h/5 && ty>=y-h/5 && ty<=y+h/5) {
+                    if(!isDown && tx>=x-2*h/5 && tx<=x+2*h/5 && ty>=y-h/5 && ty<=y+h/5) {
                         isDown = true;
                     }
                     break;
@@ -98,7 +98,6 @@ public class SoundPlayerView extends View{
                     if(isDown) {
                         x = event.getX();
                         currentTime = (long)(((x*1.0f)/w)*durationInSeconds);
-
                         postInvalidate();
                     }
                     break;
@@ -107,6 +106,9 @@ public class SoundPlayerView extends View{
                         isDown = false;
                         if(!isRunning) {
                             resume();
+                            if(playButton!=null) {
+                                playButton.changeMode(0);
+                            }
                         }
                     }
                     break;
@@ -120,6 +122,11 @@ public class SoundPlayerView extends View{
             }
             else {
                 isRunning = false;
+                currentTime = 0;
+                x = 0;
+                if(playButton!=null) {
+                    playButton.changeMode(1);
+                }
             }
         }
 
@@ -140,6 +147,10 @@ public class SoundPlayerView extends View{
     private class PlayButton {
         private float x,y,size;
         private int mode = 0;
+        public void changeMode(int mode) {
+            this.mode = mode;
+            postInvalidate();
+        }
         public PlayButton() {
 
             x = w/2;
